@@ -8,7 +8,6 @@
 
 namespace OC\PlatformBundle\Controller;
 
-use Symfony\Bridge\Monolog\Handler\FingersCrossed\NotFoundActivationStrategy;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +22,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class AdvertController extends Controller
 {
+    /**
+     * Display ads
+     *
+     * @param int $page
+     * @access public
+     *
+     * @return Response
+     */
     public function indexAction(int $page) : Response
     {
         if ($page < 1) {
@@ -47,6 +54,18 @@ class AdvertController extends Controller
                 'id'      => 3,
                 'author'  => 'Mathieu',
                 'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
+                'date'    => new \Datetime()),
+            array(
+                'title'   => 'Lead Developer',
+                'id'      => 4,
+                'author'  => 'Ben',
+                'content' => 'Nous proposons un poste de Lead Developer. Blabla…',
+                'date'    => new \Datetime()),
+            array(
+                'title'   => 'CTO',
+                'id'      => 5,
+                'author'  => 'Mathieu',
+                'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
                 'date'    => new \Datetime())
         );
 
@@ -54,6 +73,14 @@ class AdvertController extends Controller
         return $this->render('@OCPlatform/Advert/index.html.twig', ['page' => $page, 'listAdverts' => $listAdverts]);
     }
 
+    /**
+     * View specific add
+     * 
+     * @param int $id
+     * @access public
+     * 
+     * @return Response
+     */
     public function viewAction(int $id) : Response
     {
         $advert = array(
@@ -69,12 +96,27 @@ class AdvertController extends Controller
         ));
     }
 
-    public function addAction(Request $request) : Response
+    /**
+     * Add new ad
+     * 
+     * @access public
+     *
+     * @return Response
+     */
+    public function addAction() : Response
     {
         return new Response();
     }
 
-    public function editAction(int $id, Request $request) : Response
+    /**
+     * Edit ad
+     *
+     * @param int $id
+     * @access public
+     *
+     * @return Response
+     */
+    public function editAction(int $id) : Response
     {
         $advert = array(
             'title'   => 'Recherche développpeur Symfony',
@@ -90,27 +132,16 @@ class AdvertController extends Controller
 
     }
 
+    /**
+     * Delete action
+     *
+     * @param int $id
+     * @access public
+     *
+     * @return Response
+     */
     public function deleteAction(int $id) : Response
     {
         return $this->render('@OCPlatform/Advert/delete.html.twig');
     }
-
-    public function menuAction($limit)
-    {
-        // On fixe en dur une liste ici, bien entendu par la suite
-        // on la récupérera depuis la BDD !
-        $listAdverts = array(
-            array('id' => 2, 'title' => 'Recherche développeur Symfony'),
-            array('id' => 5, 'title' => 'Mission de webmaster'),
-            array('id' => 9, 'title' => 'Offre de stage webdesigner')
-        );
-
-        return $this->render('@OCPlatform/Advert/menu.html.twig', array(
-            // Tout l'intérêt est ici : le contrôleur passe
-            // les variables nécessaires au template !
-            'listAdverts' => $listAdverts
-        ));
-    }
-
-
 }

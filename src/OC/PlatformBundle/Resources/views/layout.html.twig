@@ -1,17 +1,18 @@
 {# src/OC/PlatformBundle/Resources/views/layout.html.twig #}
 
-{% extends "base.html.twig" %}
+{% extends "@Core/layout.html.twig" %}
 
 {% block title %}
     Annonces - {{ parent() }}
 {% endblock %}
 
+{% block header %}
+    <div id="header" class="jumbotron">
+        <h1>Page annonces</h1>
+    </div>
+{% endblock %}
+
 {% block body %}
-
-    {# On définit un sous-titre commun à toutes les pages du bundle, par exemple #}
-    <h1>Annonces</h1>
-
-    <hr>
 
     {# On définit un nouveau bloc, que les vues du bundle pourront remplir #}
     {% block ocplatform_body %}

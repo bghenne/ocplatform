@@ -1,0 +1,14 @@
+{# src/CoreBundle/Resources/views/Menu/menu.html.twig #}
+
+<div id="menu" class="col-md-3">
+    <h3>Accueil du site</h3>
+    <ul class="nav nav-pills nav-stacked">
+        <li><a href="{{ path('core_homepage') }}">Accueil</a></li>
+        <li><a href="{{ path('core_contact') }}">Page contact</a></li>
+    </ul>
+    <h3>Les annonces</h3>
+    <ul class="nav nav-pills nav-stacked">
+        <li><a href="{{ path('oc_platform_home') }}">Accueil annonces</a></li>
+        <li><a href="{{ path('oc_platform_add') }}">Ajouter une annonce</a></li>
+    </ul>
+</div>

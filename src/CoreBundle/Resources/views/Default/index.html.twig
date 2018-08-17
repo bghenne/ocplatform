@@ -1,10 +1,22 @@
 {# src/OC/PlatformBundle/Resources/views/Advert/index.html.twig #}
 
-{% extends "@OCPlatform/layout.html.twig" %}
+{% extends "@Core/layout.html.twig" %}
 
-{% block ocplatform_body %}
+{% block title %}
+    Accueil
+{% endblock %}
 
-    <h2>Liste des annonces</h2>
+{% block body %}
+
+    {% if app.flashes('info') is defined %}
+        {% for message in app.flashes('info') %}
+            <div style="background-color : #5eb5e0; width: 500px; height: 30px;">
+                <span style="margin: 5px 5px 5px 5px;" class="glyphicon glyphicon-info-sign"></span>&nbsp; {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <h2>Trois dernières annonces</h2>
 
     <ul>
         {% for advert in listAdverts %}
