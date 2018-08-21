@@ -117,28 +117,15 @@ class AdvertController extends Controller
      */
     public function addAction() : Response
     {
-        $serviceDoctrine = $this->getDoctrine();
-
-        $advertRepository = $serviceDoctrine->getRepository('OCPlatformBundle:Advert');
-
-        /** @var Advert $advert */
-        $advert = $advertRepository->find(1);
-
-        $skills = $serviceDoctrine->getRepository('OCPlatformBundle:Skill')->findAll();
+        $advert = new Advert();
+        $advert->setAuthor('Ben')
+            ->setContent('Super annonce de ouf !')
+            ->setPublished(true)
+            ->setEmail('benjamin_ghenne@yahoo.fr')
+            ->setTitle('Une nouvelle anonnce');
 
         $em = $this->getDoctrine()->getManager();
-
-        foreach ($skills as $skill) {
-
-            $advertSkill = new AdvertSkill();
-            $advertSkill->setAdvert($advert)
-                        ->setSkill($skill)
-                        ->setLevel('Expert');
-
-            $em->persist($advertSkill);
-        }
-
-
+        $em->persist($advert);
 
         $em->flush();
 
