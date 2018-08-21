@@ -8,26 +8,60 @@
 
 {% block ocplatform_body %}
 
-    <h2>{{ advert.title }}</h2>
-    <i>Par {{ advert.author }}, le {{ advert.date|date('d/m/Y') }}</i>
+    {% if advert is defined %}
 
-    <div class="well">
-        {{ advert.content }}
-    </div>
+        <h2>{{ advert.title }}</h2>
+        <i>Par {{ advert.author }}, le {{ advert.date|date('d/m/Y') }}</i>
 
-    <p>
-        <a href="{{ path('oc_platform_home') }}" class="btn btn-default">
-            <i class="glyphicon glyphicon-chevron-left"></i>
-            Retour à la liste
-        </a>
-        <a href="{{ path('oc_platform_edit', {'id': advert.id}) }}" class="btn btn-default">
-            <i class="glyphicon glyphicon-edit"></i>
-            Modifier l'annonce
-        </a>
-        <a href="{{ path('oc_platform_delete', {'id': advert.id}) }}" class="btn btn-danger">
-            <i class="glyphicon glyphicon-trash"></i>
-            Supprimer l'annonce
-        </a>
-    </p>
+        <div class="well">
+            {{ advert.content }}
+        </div>
+
+        {% if advert.image is not null %}
+            <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}"/>
+        {% endif %}
+
+        <p>
+            <a href="{{ path('oc_platform_home') }}" class="btn btn-default">
+                <i class="glyphicon glyphicon-chevron-left"></i>
+                Retour à la liste
+            </a>
+            <a href="{{ path('oc_platform_edit', {'id': advert.id}) }}" class="btn btn-default">
+                <i class="glyphicon glyphicon-edit"></i>
+                Modifier l'annonce
+            </a>
+            <a href="{{ path('oc_platform_delete', {'id': advert.id}) }}" class="btn btn-danger">
+                <i class="glyphicon glyphicon-trash"></i>
+                Supprimer l'annonce
+            </a>
+        </p>
+
+        {% if advertSkills is not null %}
+            {{ "Compétences : "}}
+            {% for advertSkill in advertSkills %}
+                <p>- Nom : {{ advertSkill.skill.name }} - Niveau : {{ advertSkill.level }} </p>
+            {% endfor %}
+        {% endif %}
+
+        {% if not advert.categories.empty %}
+            {{ "Catégories : "}}
+            {% for category in advert.categories %}
+                {{ category.name }}{% if not loop.last %},{% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <p>Candidatures</p>
+        {% if applications is not null %}
+            {% for application in applications %}
+                {{ "Candidature : %s"|format(application.id) }}
+                <p>
+                   {{ application.author }}
+                   {{ application.content }}
+                   {{ application.date|date("d/m/Y") }}
+                </p>
+            {% endfor %}
+        {% endif %}
+
+    {% endif %}
 
 {% endblock %}

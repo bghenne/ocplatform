@@ -8,8 +8,10 @@
 
 namespace OC\PlatformBundle\Controller;
 
+use OC\PlatformBundle\Entity\Advert;
+use OC\PlatformBundle\Entity\AdvertSkill;
+use OC\PlatformBundle\Entity\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -83,16 +85,26 @@ class AdvertController extends Controller
      */
     public function viewAction(int $id) : Response
     {
-        $advert = array(
-            'title'   => 'Recherche développpeur Symfony2',
-            'id'      => $id,
-            'author'  => 'Alexandre',
-            'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
-            'date'    => new \Datetime()
-        );
+        $serviceDoctrine = $this->getDoctrine();
+
+        $advertRepository = $serviceDoctrine->getRepository('OCPlatformBundle:Advert');
+
+        $advert = $advertRepository->find($id);
+
+        if (null === $advert) {
+            return $this->render('@OCPlatform/Advert/view.html.twig');
+        }
+
+        $applicationRepository = $serviceDoctrine->getRepository('OCPlatformBundle:Application');
+        $advertSkillsRpository = $serviceDoctrine->getRepository('OCPlatformBundle:AdvertSkill');
+
+        $applications = $applicationRepository->findBy(['advert' => $advert]);
+        $advertSkills = $advertSkillsRpository->findBy(['advert' => $advert]);
 
         return $this->render('@OCPlatform/Advert/view.html.twig', array(
-            'advert' => $advert
+            'advert' => $advert,
+            'applications' => $applications,
+            'advertSkills' => $advertSkills
         ));
     }
 
@@ -105,6 +117,31 @@ class AdvertController extends Controller
      */
     public function addAction() : Response
     {
+        $serviceDoctrine = $this->getDoctrine();
+
+        $advertRepository = $serviceDoctrine->getRepository('OCPlatformBundle:Advert');
+
+        /** @var Advert $advert */
+        $advert = $advertRepository->find(1);
+
+        $skills = $serviceDoctrine->getRepository('OCPlatformBundle:Skill')->findAll();
+
+        $em = $this->getDoctrine()->getManager();
+
+        foreach ($skills as $skill) {
+
+            $advertSkill = new AdvertSkill();
+            $advertSkill->setAdvert($advert)
+                        ->setSkill($skill)
+                        ->setLevel('Expert');
+
+            $em->persist($advertSkill);
+        }
+
+
+
+        $em->flush();
+
         return new Response();
     }
 
@@ -118,13 +155,26 @@ class AdvertController extends Controller
      */
     public function editAction(int $id) : Response
     {
-        $advert = array(
-            'title'   => 'Recherche développpeur Symfony',
-            'id'      => $id,
-            'author'  => 'Alexandre',
-            'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
-            'date'    => new \Datetime()
-        );
+        $serviceDoctrine = $this->getDoctrine();
+
+        $advertRepository = $serviceDoctrine->getRepository('OCPlatformBundle:Advert');
+
+        /** @var Advert $advert */
+        $advert = $advertRepository->find($id);
+
+        if (null === $advert) {
+            throw new NotFoundHttpException(sprintf('Advert with id %s not found', $id));
+        }
+
+        $categories = $serviceDoctrine->getRepository('OCPlatformBundle:Category')->findAll();
+
+        foreach ($categories as $category) {
+            $advert->addCategory($category);
+        }
+
+        $em = $serviceDoctrine->getManager();
+
+        $em->flush();
 
         return $this->render('@OCPlatform/Advert/edit.html.twig', array(
             'advert' => $advert
@@ -142,6 +192,22 @@ class AdvertController extends Controller
      */
     public function deleteAction(int $id) : Response
     {
+        $serviceDoctrine = $this->getDoctrine();
+
+        $advertRepository = $serviceDoctrine->getRepository('OCPlatformBundle:Advert');
+
+        /** @var Advert $advert */
+        $advert = $advertRepository->find($id);
+
+        $categories = $serviceDoctrine->getRepository('OCPlatformBundle:Category')->findAll();
+
+        foreach ($categories as $category) {
+            $advert->removeCategory($category);
+        }
+
+        $serviceDoctrine->getManager()->flush();
+
+
         return $this->render('@OCPlatform/Advert/delete.html.twig');
     }
 }
