@@ -1,15 +1,15 @@
 <?php
 
-namespace OC\PlatformBundle\Antispam;
+namespace OC\PlatformBundle\Service\Antispam;
 
 /**
- * Class OCAntispam
+ * Class Antispam
  *
  * @package PlatformBundle
  * @category Service
  * @author b-ghenne <benjamin.ghenne@gmail.com>
  */
-class OCAntispam
+class Antispam
 {
     private $mailer;
     private $locale;

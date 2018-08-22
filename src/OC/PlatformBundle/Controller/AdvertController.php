@@ -1,17 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ben
- * Date: 13/08/18
- * Time: 14:34
- */
 
 namespace OC\PlatformBundle\Controller;
 
 use OC\PlatformBundle\Entity\Advert;
-use OC\PlatformBundle\Entity\AdvertSkill;
-use OC\PlatformBundle\Entity\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -27,52 +20,32 @@ class AdvertController extends Controller
     /**
      * Display ads
      *
-     * @param int $page
+     * @param string $page
      * @access public
      *
      * @return Response
      */
-    public function indexAction(int $page) : Response
+    public function indexAction(string $page) : Response
     {
         if ($page < 1) {
             return new NotFoundHttpException(sprintf('Page %s does not exist', $page));
         }
 
-        $listAdverts = array(
-            array(
-                'title'   => 'Recherche développpeur Symfony',
-                'id'      => 1,
-                'author'  => 'Alexandre',
-                'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
-                'date'    => new \Datetime()),
-            array(
-                'title'   => 'Mission de webmaster',
-                'id'      => 2,
-                'author'  => 'Hugo',
-                'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
-                'date'    => new \Datetime()),
-            array(
-                'title'   => 'Offre de stage webdesigner',
-                'id'      => 3,
-                'author'  => 'Mathieu',
-                'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
-                'date'    => new \Datetime()),
-            array(
-                'title'   => 'Lead Developer',
-                'id'      => 4,
-                'author'  => 'Ben',
-                'content' => 'Nous proposons un poste de Lead Developer. Blabla…',
-                'date'    => new \Datetime()),
-            array(
-                'title'   => 'CTO',
-                'id'      => 5,
-                'author'  => 'Mathieu',
-                'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
-                'date'    => new \Datetime())
-        );
+        $numberPerPage = $this->container->getParameter('paginator_number_per_page');
 
+        $listAdverts = $this->getDoctrine()->getRepository('OCPlatformBundle:Advert')->getAdvertsWithCategoriesAndImage($page, $numberPerPage);
 
-        return $this->render('@OCPlatform/Advert/index.html.twig', ['page' => $page, 'listAdverts' => $listAdverts]);
+        $numberOfPages = ceil(count($listAdverts) / $numberPerPage);
+
+        if ($page > $numberOfPages) {
+            throw $this->createNotFoundException(sprintf('La page %s n\'existe pas', $page));
+        }
+
+        return $this->render('@OCPlatform/Advert/index.html.twig', [
+            'page' => $page,
+            'listAdverts' => $listAdverts,
+            'numberOfPages' => $numberOfPages
+        ]);
     }
 
     /**
@@ -115,32 +88,27 @@ class AdvertController extends Controller
      *
      * @return Response
      */
-    public function addAction() : Response
+    public function addAction(Request $request) : Response
     {
-        $advert = new Advert();
-        $advert->setAuthor('Ben')
-            ->setContent('Super annonce de ouf !')
-            ->setPublished(true)
-            ->setEmail('benjamin_ghenne@yahoo.fr')
-            ->setTitle('Une nouvelle anonnce');
+        if (!$request->isMethod(Request::METHOD_POST)) {
+            return $this->render('@OCPlatform/Advert/add.html.twig');
+        }
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($advert);
+        $this->addFlash('notice', 'Annonce sauvegardée correctement');
 
-        $em->flush();
-
-        return new Response();
+        return $this->redirectToRoute('oc_platform_view', ['id' => $advert->getId()]);
     }
 
     /**
      * Edit ad
      *
      * @param int $id
+     * @param Request $request
      * @access public
      *
      * @return Response
      */
-    public function editAction(int $id) : Response
+    public function editAction(int $id, Request $request) : Response
     {
         $serviceDoctrine = $this->getDoctrine();
 
@@ -153,19 +121,13 @@ class AdvertController extends Controller
             throw new NotFoundHttpException(sprintf('Advert with id %s not found', $id));
         }
 
-        $categories = $serviceDoctrine->getRepository('OCPlatformBundle:Category')->findAll();
-
-        foreach ($categories as $category) {
-            $advert->addCategory($category);
+        if (!$request->isMethod(Request::METHOD_POST)) {
+            return $this->render('@OCPlatform/Advert/add.html.twig');
         }
 
-        $em = $serviceDoctrine->getManager();
+        $this->addFlash('notice', 'Annonce sauvegardée correctement');
 
-        $em->flush();
-
-        return $this->render('@OCPlatform/Advert/edit.html.twig', array(
-            'advert' => $advert
-        ));
+        return $this->redirectToRoute('oc_platform_view', ['id' => $advert->getId()]);
 
     }
 
@@ -194,7 +156,30 @@ class AdvertController extends Controller
 
         $serviceDoctrine->getManager()->flush();
 
-
         return $this->render('@OCPlatform/Advert/delete.html.twig');
+    }
+
+    /**
+     * Purge adverts without applications
+     *
+     * @param int $days
+     * @access public
+     *
+     * @return Response
+     */
+    public function purgeAction(int $days) : Response
+    {
+        try {
+            /** @var \OC\PlatformBundle\Service\Purger\Advert $advertService */
+            $purgerAdvertService = $this->get('oc_platform_service_purger.advert');
+
+            $purgerAdvertService->purge($days);
+
+            $message = sprintf('Purge for %s last days done with success !', $days);
+        } catch(\Exception $e) {
+            $message = 'An error occurred while purging';
+        }
+
+        return new Response($message);
     }
 }

@@ -22,3 +22,7 @@ oc_platform_delete:
     defaults: { _controller:  OCPlatformBundle:Advert:delete }
     requirements: {id : \d+ }
 
+oc_platform_purge:
+    path: /purge/{days}
+    defaults: { _controller: OCPlatformBundle:Advert:purge, days: 10 }
+    requirements: {days: \d+}
