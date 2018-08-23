@@ -8,6 +8,14 @@
 
 {% block ocplatform_body %}
 
+    {# flash messages#}
+    {% if app.flashes('notice') is defined %}
+        {% for message in app.flashes('notice') %}
+            <div style="background-color : #5eb5e0; width: 500px; height: 30px;">
+                <span style="margin: 5px 5px 5px 5px;" class="glyphicon glyphicon-info-sign"></span>&nbsp; {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
     {% if advert is defined %}
 
         <h2>{{ advert.title }}</h2>
@@ -18,7 +26,7 @@
         </div>
 
         {% if advert.image is not null %}
-            <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}"/>
+            <img src="{{ asset('/uploads/images/' ~ advert.image.id ~ '.' ~ advert.image.extension) }}" alt="{{ advert.image.alt }}" />
         {% endif %}
 
         <p>

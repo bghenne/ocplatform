@@ -3,7 +3,10 @@
 namespace OC\PlatformBundle\Controller;
 
 use OC\PlatformBundle\Entity\Advert;
+use OC\PlatformBundle\Form\AdvertEditType;
+use OC\PlatformBundle\Form\AdvertType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -90,9 +93,19 @@ class AdvertController extends Controller
      */
     public function addAction(Request $request) : Response
     {
-        if (!$request->isMethod(Request::METHOD_POST)) {
-            return $this->render('@OCPlatform/Advert/add.html.twig');
+        $advert = new Advert();
+
+        /** @var FormBuilder $formBuilder */
+        $form = $this->createForm(AdvertType::class, $advert);
+
+        if (!$request->isMethod(Request::METHOD_POST) || !$form->handleRequest($request)->isValid()) {
+            return $this->render('@OCPlatform/Advert/add.html.twig', ['form' => $form->createView()]);
         }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($advert);
+
+        $entityManager->flush();
 
         $this->addFlash('notice', 'Annonce sauvegardée correctement');
 
@@ -121,9 +134,19 @@ class AdvertController extends Controller
             throw new NotFoundHttpException(sprintf('Advert with id %s not found', $id));
         }
 
-        if (!$request->isMethod(Request::METHOD_POST)) {
-            return $this->render('@OCPlatform/Advert/add.html.twig');
+        $form = $this->createForm(AdvertEditType::class, $advert);
+
+        if (!$request->isMethod(Request::METHOD_POST) || !$form->handleRequest($request)->isValid()) {
+            return $this->render('@OCPlatform/Advert/edit.html.twig', [
+                'form' => $form->createView(),
+                'advert' => $advert
+            ]);
         }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($advert);
+
+        $entityManager->flush();
 
         $this->addFlash('notice', 'Annonce sauvegardée correctement');
 
@@ -139,7 +162,7 @@ class AdvertController extends Controller
      *
      * @return Response
      */
-    public function deleteAction(int $id) : Response
+    public function deleteAction(int $id, Request $request) : Response
     {
         $serviceDoctrine = $this->getDoctrine();
 
@@ -148,15 +171,36 @@ class AdvertController extends Controller
         /** @var Advert $advert */
         $advert = $advertRepository->find($id);
 
-        $categories = $serviceDoctrine->getRepository('OCPlatformBundle:Category')->findAll();
-
-        foreach ($categories as $category) {
-            $advert->removeCategory($category);
+        if (null === $advert) {
+            throw new NotFoundHttpException(sprintf('Advert with id %s not found', $id));
         }
 
-        $serviceDoctrine->getManager()->flush();
+        $form = $this->get('form.factory')->create();
 
-        return $this->render('@OCPlatform/Advert/delete.html.twig');
+        if (!$request->isMethod(Request::METHOD_POST) || !$form->handleRequest($request)->isValid()) {
+            return $this->render('@OCPlatform/Advert/delete.html.twig', [
+                'form' => $form->createView(),
+                'advert' => $advert
+            ]);
+        }
+
+
+        $categories = $serviceDoctrine->getRepository('OCPlatformBundle:Category')->findAll();
+
+        if (!empty($categories)) {
+            foreach ($categories as $category) {
+                $advert->removeCategory($category);
+            }
+        }
+
+        $entityManager = $serviceDoctrine->getManager();
+
+        $entityManager->remove($advert);
+        $entityManager->flush();
+
+        $this->addFlash('notice', 'Annonce supprimée correctement');
+
+        return $this->redirectToRoute('oc_platform_home');
     }
 
     /**

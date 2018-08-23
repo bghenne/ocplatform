@@ -4,6 +4,14 @@
 
 {% block ocplatform_body %}
 
+    {% if app.flashes('notice') is defined %}
+        {% for message in app.flashes('notice') %}
+            <div style="background-color : #5eb5e0; width: 500px; height: 30px;">
+                <span style="margin: 5px 5px 5px 5px;" class="glyphicon glyphicon-info-sign"></span>&nbsp; {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
     <h2>Liste des annonces</h2>
 
     <ul>

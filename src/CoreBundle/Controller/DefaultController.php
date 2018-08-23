@@ -27,8 +27,8 @@ class DefaultController extends Controller
 
         // sort array to get the most recents first based on dates
         usort($listAdverts, function($item1, $item2) {
-            $date1 = $item1['date']->format('Y-m-d');
-            $date2 = $item2['date']->format('Y-m-d');
+            $date1 = $item1->getDate()->format('Y-m-d');
+            $date2 = $item2->getDate()->format('Y-m-d');
             if ($date1 == $date2)  {
                return 0;
             }
