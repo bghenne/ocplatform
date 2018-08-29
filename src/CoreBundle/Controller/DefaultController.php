@@ -2,6 +2,7 @@
 
 namespace CoreBundle\Controller;
 
+use OC\PlatformBundle\Entity\Advert;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -42,5 +43,28 @@ class DefaultController extends Controller
         return $this->render('@Core/Default/index.html.twig', [
             'listAdverts' => $listAdverts
         ]);
+    }
+
+
+    /**
+     * Test stuffs
+     *
+     * @access public
+     *
+     * @return Response
+     */
+    public function testAction() : Response
+    {
+        $advert = new Advert();
+        $advert->setContent('Blabla')
+            ->setAuthor('1')
+            ->setEmail('totototo.com');
+
+        $validator = $this->get('validator');
+
+        $errors = $validator->validate($advert);
+
+        return new Response((string) $errors);
+
     }
 }
