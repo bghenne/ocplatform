@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * Class AdvertController
@@ -90,6 +91,7 @@ class AdvertController extends Controller
      * @access public
      *
      * @return Response
+     * @Security("has_role('ROLE_AUTEUR') and has_role('ROLE_MODERATEUR')")
      */
     public function addAction(Request $request) : Response
     {
@@ -103,6 +105,7 @@ class AdvertController extends Controller
         }
 
         $entityManager = $this->getDoctrine()->getManager();
+        $advert->setIp($request->getClientIp());
         $entityManager->persist($advert);
 
         $entityManager->flush();

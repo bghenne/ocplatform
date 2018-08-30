@@ -34,6 +34,7 @@ class LoadAdvert implements FixtureInterface
                    ->setEmail(sprintf('author_%s@toto.com', $i))
                    ->setContent(sprintf('Content %s', $i))
                    ->setDate(new \DateTime('2018-08-' . (10 == $i ? '10' : '0' . $i)))
+                   ->setIp('127.0.0.1')
                    ->setPublished(true);
 
             $manager->persist($advert);

@@ -2,6 +2,7 @@
 
 namespace OC\PlatformBundle\Repository;
 
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
@@ -65,5 +66,28 @@ class AdvertRepository extends \Doctrine\ORM\EntityRepository
             ->getQuery();
 
         return $query->getResult();
+    }
+
+    /**
+     * Check for flooding
+     *
+     * @param string $ip
+     * @param int $frequencyInSeconds
+     *
+     * @return bool
+     * @throws NonUniqueResultException
+     */
+    public function isFlood(string $ip, int $frequencyInSeconds = 15)
+    {
+        $query = $this->createQueryBuilder('a')
+            ->where('a.date > :date_minus_seconds')
+            ->andWhere('a.ip = :ip')
+            ->setParameters([
+                'date_minus_seconds' => new \DateTime(sprintf('-%s seconds', $frequencyInSeconds)),
+                'ip' => $ip
+            ])
+            ->getQuery();
+
+        return $query->getOneOrNullResult();
     }
 }

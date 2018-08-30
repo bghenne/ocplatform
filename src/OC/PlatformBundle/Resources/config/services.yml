@@ -31,6 +31,13 @@ services:
     arguments: ["@oc_platform_service_purger.advert"]
     tags:
     - { name: 'console.command', command: 'oc:platform:advert:purge' }
+  oc_platform.validator.antiflood:
+    class: OC\PlatformBundle\Validator\AntifloodValidator
+    arguments: ['@request_stack', '@doctrine.orm.entity_manager']
+    tags:
+    - { name: validator.constraint_validator, alias: oc_platform_antiflood}
+
+
   # doctrine fixtures
   OC\PlatformBundle\DataFixtures\ORM\LoadCategory:
     tags: [doctrine.fixture.orm]
