@@ -16,6 +16,10 @@
         {% endfor %}
     {% endif %}
 
+    {% if totalNumberOfAdverts is defined %}
+        <h2>{{ 'advert.nombre'|transchoice(totalNumberOfAdverts) }}</h2>
+    {% endif %}
+
     <h2>Trois dernières annonces</h2>
 
     <ul>

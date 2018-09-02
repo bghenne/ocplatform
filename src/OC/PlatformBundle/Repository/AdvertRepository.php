@@ -90,4 +90,21 @@ class AdvertRepository extends \Doctrine\ORM\EntityRepository
 
         return $query->getOneOrNullResult();
     }
+
+    /**
+     * Get the total of adverts
+     *
+     * @access public
+     *
+     * @return mixed
+     * @throws NonUniqueResultException
+     */
+    public function getTotalAdverts()
+    {
+        $query = $this->createQueryBuilder('a')
+            ->select('COUNT(a)')
+            ->getQuery();
+
+        return $query->getSingleScalarResult();
+    }
 }

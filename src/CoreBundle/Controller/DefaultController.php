@@ -24,24 +24,27 @@ class DefaultController extends Controller
      */
     public function indexAction() : Response
     {
-        $listAdverts = $this->getDoctrine()->getRepository('OCPlatformBundle:Advert')->findAll();
-
-        // sort array to get the most recents first based on dates
-        usort($listAdverts, function($item1, $item2) {
-            $date1 = $item1->getDate()->format('Y-m-d');
-            $date2 = $item2->getDate()->format('Y-m-d');
-            if ($date1 == $date2)  {
-               return 0;
-            }
-
-            return $date1 < $date2 ? 1 : -1;
-        });
-
-        // extract three first results
-        $listAdverts = array_slice($listAdverts, 0, 3);
+        $advertRepository = $this->getDoctrine()->getRepository('OCPlatformBundle:Advert');
+        $listAdverts = $advertRepository->findBy([], ['date' => 'DESC'], 3);
+        $totalNumberOfAdverts = $advertRepository->getTotalAdverts();
+//
+//        // sort array to get the most recents first based on dates
+//        usort($listAdverts, function($item1, $item2) {
+//            $date1 = $item1->getDate()->format('Y-m-d');
+//            $date2 = $item2->getDate()->format('Y-m-d');
+//            if ($date1 == $date2)  {
+//               return 0;
+//            }
+//
+//            return $date1 < $date2 ? 1 : -1;
+//        });
+//
+//        // extract three first results
+//        $listAdverts = array_slice($listAdverts, 0, 3);
 
         return $this->render('@Core/Default/index.html.twig', [
-            'listAdverts' => $listAdverts
+            'listAdverts' => $listAdverts,
+            'totalNumberOfAdverts' => $totalNumberOfAdverts
         ]);
     }
 
@@ -59,5 +62,18 @@ class DefaultController extends Controller
         return $this->render('@Core/Default/translation.html.twig', [
             'name' => $name
         ]);
+
+        /**
+
+        <?php
+        $translator = $this->get('translator'); // depuis un contrôleur
+
+        // Texte simple
+        $translator->trans('maChaîne',  array('%placeholder%' => $placeholderValue) , 'domaine', $locale);
+
+        // Texte avec gestion de pluriels
+        $translator->transchoice($count, 'maChaîne',  array('%placeholder%' => $placeholderValue) , 'domaine', $locale)
+
+         **/
     }
 }

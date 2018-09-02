@@ -573,7 +573,6 @@ class Advert
         return $this->advertSkills;
     }
 
-
     /**
      * Set user.
      *

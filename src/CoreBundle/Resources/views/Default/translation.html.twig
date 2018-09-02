@@ -1,3 +1,54 @@
 {% if name is defined %}
-    Hello {{ name }}
+    {{ 'Hello'|trans({ '%name%': name }) }} {{ name }}
 {% endif %}
+
+{{ "test.page.title"|trans }}
+
+{{ "charte.titre"|trans }}
+{{ "charte.donnee.0"|trans }}
+
+{# ou #}
+
+{% for i in 0..2 %}
+    <p>{{ ('charte.donnee.' ~ i )|trans }}</p>
+{% endfor %}
+
+Aujourd'hui nous sommes le {{ 'now'|localizeddate('full', 'none') }} et il est {{ 'now'|localizeddate('none', 'short') }}
+
+{#
+
+-- Domaine
+
+Balise :{% trans from 'domaine' %}chaîne{% endtrans %}.
+
+Filtre :{{ 'chaîne'|trans({}, 'domaine') }}.
+
+Service :$translator->trans('chaîne', array(), 'domaine').
+
+
+#}
+
+{#
+
+-- Filtre
+
+Balise :{% trans with {'%name%': name} %}hello{% endtrans %}.
+
+Filtre :{{ 'hello'|trans({'%name%': name}) }}.
+
+Service :$translator->trans('hello', array('%name%' => $name)).
+
+
+#}
+
+{#
+
+{% trans with {'%placeholder%': placeholderValue} from 'domaine' into locale %}maChaîne{% endtrans %}
+
+{% transchoice count with {'%placeholder%': placeholderValue} from 'domaine' into locale %}maChaîne{% endtranschoice %}
+
+{{ 'maChaîne'|trans({'%placeholder%': placeholderValue}, 'domaine', locale) }}
+
+{{ 'maChaîne'|transchoice (count,  {'%placeholder%': placeholderValue}, 'domaine', locale) }}
+
+#}
