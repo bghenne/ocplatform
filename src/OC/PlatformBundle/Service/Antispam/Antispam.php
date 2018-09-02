@@ -28,7 +28,7 @@ class Antispam
      *
      * @return OCAntispam
      */
-    public function setMailer(\Swift_Mailer $mailer) : OCAntispam
+    public function setMailer(\Swift_Mailer $mailer) : Antispam
     {
         $this->mailer = $mailer;
 
@@ -48,7 +48,7 @@ class Antispam
      *
      * @return OCAntispam
      */
-    public function setLocale(string $locale) : OCAntispam
+    public function setLocale(string $locale) : Antispam
     {
         $this->locale = $locale;
 
@@ -68,17 +68,16 @@ class Antispam
      *
      * @return OCAntispam
      */
-    public function setMinLength(int $minLength) : OCAntispam
+    public function setMinLength(int $minLength) : Antispam
     {
         $this->minLength = $minLength;
 
         return $this;
     }
 
-    public function __construct(\Swift_Mailer $mailer, string $locale, int $minLength)
+    public function __construct(\Swift_Mailer $mailer, int $minLength)
     {
         $this->setMailer($mailer)
-             ->setLocale($locale)
              ->setMinLength($minLength);
     }
 

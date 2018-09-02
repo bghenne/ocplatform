@@ -2,9 +2,10 @@
 
 namespace OC\PlatformBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use OC\PlatformBundle\Entity\Advert;
+use OC\UserBundle\DataFixtures\ORM\LoadUser;
 
 /**
  * Class LoadAdvert
@@ -15,7 +16,7 @@ use OC\PlatformBundle\Entity\Advert;
  * @category Doctrine Fixture
  * @author b-ghenne <benjamin.ghenne@gmail.com>
  */
-class LoadAdvert implements FixtureInterface
+class LoadAdvert extends Fixture
 {
     /**
      * Load ten advert fixtures into database
@@ -26,6 +27,8 @@ class LoadAdvert implements FixtureInterface
      */
     public function load(ObjectManager $manager)
     {
+        $user = $manager->getRepository('OCUserBundle:User')->find(1);
+
         for ($i = 1; $i <= 10; $i++) {
 
             $advert = new Advert();
@@ -35,6 +38,7 @@ class LoadAdvert implements FixtureInterface
                    ->setContent(sprintf('Content %s', $i))
                    ->setDate(new \DateTime('2018-08-' . (10 == $i ? '10' : '0' . $i)))
                    ->setIp('127.0.0.1')
+                   ->setUser($this->getReference(LoadUser::USER_REFERENCE))
                    ->setPublished(true);
 
             $manager->persist($advert);
@@ -42,4 +46,5 @@ class LoadAdvert implements FixtureInterface
 
         $manager->flush();
     }
+
 }

@@ -96,7 +96,7 @@ class AntifloodValidator extends ConstraintValidator
 
         $isFlood = $this->getEntityManager()
             ->getRepository('OCPlatformBundle:Advert')
-            ->isFlood($ip, 300);
+            ->isFlood($ip, 30);
 
         if ($isFlood) {
             $this->context->buildViolation($constraint->message)

@@ -5,6 +5,7 @@ namespace OC\PlatformBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use OC\UserBundle\Entity\User;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -135,6 +136,14 @@ class Advert
      * @Assert\Ip(version="all")
      */
     private $ip;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="OC\UserBundle\Entity\User", inversedBy="adverts")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
 
     /**
      * Advert constructor.
@@ -562,6 +571,31 @@ class Advert
     public function getAdvertSkills()
     {
         return $this->advertSkills;
+    }
+
+
+    /**
+     * Set user.
+     *
+     * @param User $user
+     *
+     * @return Advert
+     */
+    public function setUser(User $user) : Advert
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user.
+     *
+     * @return User
+     */
+    public function getUser() : User
+    {
+        return $this->user;
     }
 
     /**

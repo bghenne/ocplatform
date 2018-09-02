@@ -3,6 +3,8 @@
 namespace OC\PlatformBundle\Controller;
 
 use OC\PlatformBundle\Entity\Advert;
+use OC\PlatformBundle\Event\MessagePostedEvent;
+use OC\PlatformBundle\Event\PlatformEvents;
 use OC\PlatformBundle\Form\AdvertEditType;
 use OC\PlatformBundle\Form\AdvertType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -91,7 +93,7 @@ class AdvertController extends Controller
      * @access public
      *
      * @return Response
-     * @Security("has_role('ROLE_AUTEUR') and has_role('ROLE_MODERATEUR')")
+     * @Security("has_role('ROLE_USER')")
      */
     public function addAction(Request $request) : Response
     {
@@ -103,6 +105,14 @@ class AdvertController extends Controller
         if (!$request->isMethod(Request::METHOD_POST) || !$form->handleRequest($request)->isValid()) {
             return $this->render('@OCPlatform/Advert/add.html.twig', ['form' => $form->createView()]);
         }
+
+        $advert->setUser($this->getUser());
+
+        $event = new MessagePostedEvent($advert->getContent(), $advert->getUser());
+
+        $this->get('event_dispatcher')->dispatch(PlatformEvents::POST_MESSAGE, $event);
+
+        $advert->setContent($event->getMessage());
 
         $entityManager = $this->getDoctrine()->getManager();
         $advert->setIp($request->getClientIp());

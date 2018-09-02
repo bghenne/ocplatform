@@ -47,24 +47,17 @@ class DefaultController extends Controller
 
 
     /**
-     * Test stuffs
+     * Translation
      *
      * @access public
+     * @param string $name
      *
      * @return Response
      */
-    public function testAction() : Response
+    public function translationAction(string $name) : Response
     {
-        $advert = new Advert();
-        $advert->setContent('Blabla')
-            ->setAuthor('1')
-            ->setEmail('totototo.com');
-
-        $validator = $this->get('validator');
-
-        $errors = $validator->validate($advert);
-
-        return new Response((string) $errors);
-
+        return $this->render('@Core/Default/translation.html.twig', [
+            'name' => $name
+        ]);
     }
 }
