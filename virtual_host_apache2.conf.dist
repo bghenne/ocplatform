@@ -1,0 +1,27 @@
+# exemple of apache2 virtual host
+<VirtualHost *:80>
+    ServerName symfony.local
+    ServerAlias www.symfony.local
+
+    DocumentRoot /var/www/symfony/web
+    <Directory /var/www/symfony/web>
+        AllowOverride None
+        Require all granted
+	Allow from All
+
+	FallbackResource /app_dev.php
+    </Directory>
+
+    # uncomment the following lines if you install assets as symlinks
+    # or run into problems when compiling LESS/Sass/CoffeeScript assets
+    # <Directory /var/www/project>
+    #     Options FollowSymlinks
+    # </Directory>
+
+    <Directory /var/www/symfony/web/bundles>
+        FallbackResource disabled
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/symfony.error.log
+    CustomLog ${APACHE_LOG_DIR}/symfony.access.log combined
+</VirtualHost>

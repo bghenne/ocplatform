@@ -7,5 +7,5 @@ core_contact:
     defaults: { _controller: CoreBundle:Contact:contact }
 
 core_test:
-    path: /test
+    path: /test/{json}
     defaults: { _controller: CoreBundle:Default:test}

@@ -3,6 +3,8 @@
 namespace OC\PlatformBundle\Controller;
 
 use OC\PlatformBundle\Entity\Advert;
+use OC\PlatformBundle\Entity\AdvertSkill;
+use OC\PlatformBundle\Entity\Skill;
 use OC\PlatformBundle\Event\MessagePostedEvent;
 use OC\PlatformBundle\Event\PlatformEvents;
 use OC\PlatformBundle\Form\AdvertEditType;
@@ -13,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 /**
  * Class AdvertController
@@ -62,17 +65,9 @@ class AdvertController extends Controller
      * 
      * @return Response
      */
-    public function viewAction(int $id) : Response
+    public function viewAction(Advert $advert) : Response
     {
         $serviceDoctrine = $this->getDoctrine();
-
-        $advertRepository = $serviceDoctrine->getRepository('OCPlatformBundle:Advert');
-
-        $advert = $advertRepository->find($id);
-
-        if (null === $advert) {
-            return $this->render('@OCPlatform/Advert/view.html.twig');
-        }
 
         $applicationRepository = $serviceDoctrine->getRepository('OCPlatformBundle:Application');
         $advertSkillsRpository = $serviceDoctrine->getRepository('OCPlatformBundle:AdvertSkill');

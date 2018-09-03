@@ -32,7 +32,7 @@ class Skill
     /**
      * @var ArrayCollection(AdvertSkill)
      *
-     * @ORM\OneToMany(targetEntity="OC\PlatformBundle\Entity\AdvertSkill", mappedBy="advert")
+     * @ORM\OneToMany(targetEntity="OC\PlatformBundle\Entity\AdvertSkill", mappedBy="skill")
      */
     private $advertSkills;
 
@@ -87,6 +87,8 @@ class Skill
     public function addAdvertSkill(AdvertSkill $advertSkill)
     {
         $this->advertSkills[] = $advertSkill;
+
+        $advertSkill->setSkill($this);
 
         return $this;
     }

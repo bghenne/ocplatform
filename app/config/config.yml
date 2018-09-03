@@ -33,6 +33,9 @@ framework:
     php_errors:
         log: true
 
+    templating:
+        engines: ['twig']
+
 # Twig Configuration
 twig:
     debug: '%kernel.debug%'
@@ -94,3 +97,12 @@ services:
         class: Twig_Extensions_Extension_Intl
         tags:
         - { name: twig.extension }
+
+assetic:
+    debug:          '%kernel.debug%'
+    use_controller: '%kernel.debug%'
+    filters:
+        cssrewrite: ~
+        jsqueeze:   ~
+        scssphp:
+          formatter: 'Leafo\ScssPhp\Formatter\Compressed'

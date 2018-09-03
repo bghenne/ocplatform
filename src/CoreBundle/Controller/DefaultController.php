@@ -5,6 +5,7 @@ namespace CoreBundle\Controller;
 use OC\PlatformBundle\Entity\Advert;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 /**
  * Class DefaultController
@@ -75,5 +76,19 @@ class DefaultController extends Controller
         $translator->transchoice($count, 'maChaîne',  array('%placeholder%' => $placeholderValue) , 'domaine', $locale)
 
          **/
+    }
+
+    /**
+     * Test stuffs
+     *
+     * @param array $json
+     *
+     * @return void
+     *
+     * @ParamConverter("json")
+     */
+    public function testAction(array $json)
+    {
+        var_dump($json); die;
     }
 }

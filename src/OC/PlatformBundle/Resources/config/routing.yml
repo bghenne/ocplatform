@@ -6,7 +6,7 @@ oc_platform_home:
 oc_platform_view:
     path: /advert/{id}
     defaults: { _controller:  OCPlatformBundle:Advert:view}
-    requirements: { id : \d+}
+    requirements: { advert_id : \d+}
 
 oc_platform_add:
     path: /add
@@ -26,3 +26,8 @@ oc_platform_purge:
     path: /purge/{days}
     defaults: { _controller: OCPlatformBundle:Advert:purge, days: 10 }
     requirements: {days: \d+}
+
+#oc_platform_advertskill:
+#    path: /advert/{advert_id}/{skill_id}
+#    defaults: { _controller: OCPlatformBundle:Advert:view }
+#    requirements : {advert_id: \d+, skill_id: \d+}
