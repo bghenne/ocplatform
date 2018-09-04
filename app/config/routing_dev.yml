@@ -19,3 +19,7 @@ translation:
         _controller: CoreBundle:Default:translation
     requirements:
         _locale: en|fr
+
+coresphere_console:
+    resource: .
+    type: extra
